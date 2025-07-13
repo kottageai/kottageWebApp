@@ -1,0 +1,8 @@
+{
+  "name": "kottageai",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
+} 
