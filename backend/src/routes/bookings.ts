@@ -1,16 +1,30 @@
 import { Router } from 'express';
-import { createClient } from '@supabase/supabase-js';
-
-// Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+// Lazy-initialise Supabase so we only read env vars **after** dotenv has run in the main entry file.
+let supabaseAdmin: SupabaseClient | null = null;
+
+function getSupabaseAdmin(): SupabaseClient {
+  if (!supabaseAdmin) {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variables.');
+    }
+
+    supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+  }
+
+  return supabaseAdmin;
+}
+
+router.get('/', async (_req, res) => {
   try {
-    const { data, error } = await supabaseAdmin.from('bookings').select('*');
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase.from('bookings').select('*');
 
     if (error) {
       throw error;
