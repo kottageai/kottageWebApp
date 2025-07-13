@@ -10,6 +10,8 @@
 *.pem
 .env.*
 
+/node_modules
+
 
 ### Frontend ###
 frontend/node_modules/
@@ -39,3 +41,6 @@ frontend/.yarn/*
 !frontend/.yarn/plugins
 !frontend/.yarn/releases
 !frontend/.yarn/versions
+
+### Backend ###
+backend/.env
