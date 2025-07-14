@@ -17,7 +17,7 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -52,57 +52,26 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center',
-      backgroundColor: '#f9fafb'
-    }}>
-      <div style={{
-        maxWidth: '400px',
-        width: '100%',
-        padding: '2rem',
-        backgroundColor: 'white',
-        borderRadius: '12px',
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-        margin: '0 1rem'
-      }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <h1 style={{ 
-            fontSize: '2rem', 
-            fontWeight: 700, 
-            color: '#1f2937',
-            marginBottom: '0.5rem'
-          }}>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="max-w-md w-full p-8 bg-white rounded-xl shadow-lg space-y-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Welcome back
           </h1>
-          <p style={{ color: '#6b7280' }}>
+          <p className="text-gray-500">
             Sign in to your Kottage account
           </p>
         </div>
 
         {error && (
-          <div style={{
-            padding: '0.75rem',
-            backgroundColor: '#fee2e2',
-            border: '1px solid #fecaca',
-            borderRadius: '6px',
-            marginBottom: '1rem'
-          }}>
-            <p style={{ color: '#dc2626', fontSize: '0.875rem' }}>{error}</p>
+          <div className="p-3 bg-red-100 border border-red-200 rounded-md">
+            <p className="text-red-600 text-sm">{error}</p>
           </div>
         )}
 
-        <form onSubmit={handleSignIn} style={{ marginBottom: '1.5rem' }}>
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '0.875rem', 
-              fontWeight: 500, 
-              color: '#374151',
-              marginBottom: '0.5rem'
-            }}>
+        <form onSubmit={handleSignIn} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Email
             </label>
             <input
@@ -110,28 +79,12 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '1rem',
-                outline: 'none',
-                transition: 'border-color 0.2s'
-              }}
-              onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
             />
           </div>
 
-          <div style={{ marginBottom: '1.5rem' }}>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '0.875rem', 
-              fontWeight: 500, 
-              color: '#374151',
-              marginBottom: '0.5rem'
-            }}>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Password
             </label>
             <input
@@ -139,105 +92,41 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '1rem',
-                outline: 'none',
-                transition: 'border-color 0.2s'
-              }}
-              onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            style={{
-              width: '100%',
-              padding: '0.75rem',
-              backgroundColor: loading ? '#9ca3af' : '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '1rem',
-              fontWeight: 500,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              transition: 'background-color 0.2s'
-            }}
+            className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg font-semibold text-base cursor-pointer transition-colors hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
 
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          marginBottom: '1.5rem'
-        }}>
-          <div style={{ flex: 1, height: '1px', backgroundColor: '#e5e7eb' }}></div>
-          <span style={{ 
-            padding: '0 1rem', 
-            fontSize: '0.875rem', 
-            color: '#6b7280'
-          }}>
-            or
-          </span>
-          <div style={{ flex: 1, height: '1px', backgroundColor: '#e5e7eb' }}></div>
+        <div className="flex items-center">
+          <div className="flex-grow bg-gray-200 h-px"></div>
+          <span className="px-4 text-sm text-gray-400">or</span>
+          <div className="flex-grow bg-gray-200 h-px"></div>
         </div>
 
         <button
           onClick={handleGoogleSignIn}
-          style={{
-            width: '100%',
-            padding: '0.75rem',
-            backgroundColor: 'white',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            fontSize: '1rem',
-            fontWeight: 500,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-            marginBottom: '1.5rem',
-            transition: 'background-color 0.2s'
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+          className="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg text-base font-medium flex items-center justify-center gap-2 transition-colors hover:bg-gray-50"
         >
-          <div style={{ 
-            width: 20, 
-            height: 20, 
-            backgroundColor: '#4285f4', 
-            borderRadius: 4,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontSize: '12px',
-            fontWeight: 'bold'
-          }}>
-            G
-          </div>
+          <svg className="w-5 h-5" viewBox="0 0 48 48">
+            <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+            <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+            <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+            <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C42.021,35.591,44,30.138,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+          </svg>
           Continue with Google
         </button>
 
-        <p style={{ 
-          textAlign: 'center', 
-          fontSize: '0.875rem', 
-          color: '#6b7280'
-        }}>
+        <p className="text-center text-sm text-gray-500">
           Don't have an account?{' '}
-          <Link href="/auth/signup" style={{ 
-            color: '#3b82f6', 
-            textDecoration: 'none',
-            fontWeight: 500
-          }}>
+          <Link href="/auth/signup" className="text-blue-600 font-medium hover:underline">
             Sign up
           </Link>
         </p>
