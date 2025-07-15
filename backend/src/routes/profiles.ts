@@ -1,25 +1,7 @@
 import { Router } from 'express';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabaseClient';
 
 const router = Router();
-
-// Lazy-initialise Supabase so we only read env vars after dotenv has run
-let supabaseAdmin: SupabaseClient | null = null;
-
-function getSupabaseAdmin(): SupabaseClient {
-  if (!supabaseAdmin) {
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !supabaseServiceKey) {
-      throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variables.');
-    }
-
-    supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
-  }
-
-  return supabaseAdmin;
-}
 
 // Validation schemas
 interface CreateProfileRequest {
@@ -58,14 +40,13 @@ function validateProfileData(data: any): CreateProfileRequest {
 // Create profile endpoint
 router.post('/', async (req, res) => {
   try {
-    // Get user from auth header
+    // Get profile from auth header
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) {
       return res.status(401).json({ error: 'Missing or invalid authorization header' });
     }
 
     const token = authHeader.substring(7);
-    const supabase = getSupabaseAdmin();
     
     // Verify the user
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
@@ -77,18 +58,18 @@ router.post('/', async (req, res) => {
     const profileData = validateProfileData(req.body);
 
     // Check if profile already exists
-    const { data: existingProfile } = await supabase
+    const { data: existingUser } = await supabase
       .from('profiles')
       .select('id')
       .eq('id', user.id)
       .single();
 
-    if (existingProfile) {
-      return res.status(409).json({ error: 'Profile already exists' });
+    if (existingUser) {
+      return res.status(409).json({ error: 'User profile already exists' });
     }
 
     // Create profile in transaction-like manner
-    const { data: profile, error: profileError } = await supabase
+    const { data: newUser, error: userError } = await supabase
       .from('profiles')
       .insert({
         id: user.id,
@@ -99,8 +80,8 @@ router.post('/', async (req, res) => {
       .select()
       .single();
 
-    if (profileError) {
-      throw profileError;
+    if (userError) {
+      throw userError;
     }
 
     // Create provider record if requested
@@ -132,7 +113,7 @@ router.post('/', async (req, res) => {
 
     res.status(201).json({
       message: 'Profile created successfully',
-      profile,
+      profile: newUser,
       provider,
     });
 
@@ -153,7 +134,6 @@ router.get('/', async (req, res) => {
     }
 
     const token = authHeader.substring(7);
-    const supabase = getSupabaseAdmin();
     
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     if (authError || !user) {
@@ -161,7 +141,7 @@ router.get('/', async (req, res) => {
     }
 
     // Get profile with provider status
-    const { data: profile, error: profileError } = await supabase
+    const { data: userProfile, error: profileError } = await supabase
       .from('profiles')
       .select(`
         *,
@@ -178,8 +158,8 @@ router.get('/', async (req, res) => {
     }
 
     res.json({
-      profile,
-      is_provider: !!profile.providers,
+      profile: userProfile,
+      is_provider: !!userProfile.providers,
     });
 
   } catch (error) {

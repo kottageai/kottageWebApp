@@ -14,7 +14,7 @@ export default function ProviderOnboardingPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/generate-form', {
+      const res = await fetch('http://localhost:4000/api/generate-form', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ description: inputValue.trim() })

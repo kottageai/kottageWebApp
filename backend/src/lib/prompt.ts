@@ -73,6 +73,4 @@ User Description to Analyze:
 {{USER_SERVICE_DESCRIPTION}}
 
 Your JSON Output:
-`;
-
-
+`; 

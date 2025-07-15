@@ -1,8 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { aIFieldGeneratorPrompt } from "./prompt";
 
-// IMPORTANT: Set your Gemini API key in the environment as GEMINI_API_KEY
-
 export async function generateBookingFormFields(description: string) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {

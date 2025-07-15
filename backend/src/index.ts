@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import bookingsRouter from './routes/bookings';
 import profilesRouter from './routes/profiles';
+import generateFormRouter from './routes/generateForm';
 import path from 'path';
 
 dotenv.config({ path: path.resolve(process.cwd(), 'backend/.env') });
@@ -18,6 +19,7 @@ app.use(express.json());
 
 app.use('/api/bookings', bookingsRouter);
 app.use('/api/profiles', profilesRouter);
+app.use('/api/generate-form', generateFormRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello from the KottageAI backend!');
