@@ -1,170 +1,65 @@
 import { Router } from 'express';
-import { supabase } from '../lib/supabaseClient';
+import { z } from 'zod';
+import { supabaseAdmin } from '..';
 
 const router = Router();
 
-// Validation schemas
-interface CreateProfileRequest {
-  full_name: string;
-  phone: string;
-  address?: string;
-  wants_to_be_provider: boolean;
-}
+// Zod schema for profile validation
+const profileSchema = z.object({
+  id: z.uuid(),
+  full_name: z.string().min(1, 'Full name is required'),
+  home_address: z.string().optional().nullable(),
+  is_provider: z.boolean(),
+  email: z.string().email().optional(),
+  avatar_url: z.string().url().optional().nullable(),
+});
 
-function validateProfileData(data: any): CreateProfileRequest {
-  if (!data.full_name?.trim()) {
-    throw new Error('Full name is required');
-  }
-  
-  if (!data.phone?.trim()) {
-    throw new Error('Phone number is required');
-  }
-
-  // Additional validations
-  if (data.phone.length < 10) {
-    throw new Error('Phone number must be at least 10 digits');
-  }
-
-  if (data.full_name.length < 2) {
-    throw new Error('Full name must be at least 2 characters');
-  }
-
-  return {
-    full_name: data.full_name.trim(),
-    phone: data.phone.trim(),
-    address: data.address?.trim() || null,
-    wants_to_be_provider: Boolean(data.wants_to_be_provider),
-  };
-}
-
-// Create profile endpoint
+// Create or update a profile
 router.post('/', async (req, res) => {
   try {
-    // Get profile from auth header
-    const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Missing or invalid authorization header' });
+    const { user, profileData } = req.body;
+
+    if (!user || !user.id) {
+      return res.status(400).json({ error: 'User is not authenticated.' });
     }
 
-    const token = authHeader.substring(7);
+    const parsedProfileData = profileSchema.safeParse({
+      id: user.id,
+      ...profileData,
+    });
+
+    if (!parsedProfileData.success) {
+      return res.status(400).json({ error: parsedProfileData.error.issues });
+    }
     
-    // Verify the user
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !user) {
-      return res.status(401).json({ error: 'Invalid or expired token' });
-    }
+    const { id, full_name, home_address, is_provider, email: providedEmail, avatar_url } = parsedProfileData.data;
+    const email = providedEmail || user.email;
 
-    // Validate request data
-    const profileData = validateProfileData(req.body);
-
-    // Check if profile already exists
-    const { data: existingUser } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('profiles')
-      .select('id')
-      .eq('id', user.id)
-      .single();
-
-    if (existingUser) {
-      return res.status(409).json({ error: 'User profile already exists' });
-    }
-
-    // Create profile in transaction-like manner
-    const { data: newUser, error: userError } = await supabase
-      .from('profiles')
-      .insert({
-        id: user.id,
-        full_name: profileData.full_name,
-        phone: profileData.phone,
-        address: profileData.address,
-      })
+      .upsert(
+        {
+          id,
+          full_name,
+          home_address,
+          is_provider,
+          email,
+          avatar_url,
+        },
+        { onConflict: 'id' }
+      )
       .select()
       .single();
 
-    if (userError) {
-      throw userError;
+    if (error) {
+      console.error('Error upserting profile:', error);
+      return res.status(500).json({ error: 'Failed to create or update profile.' });
     }
 
-    // Create provider record if requested
-    let provider = null;
-    if (profileData.wants_to_be_provider) {
-      const { data: providerData, error: providerError } = await supabase
-        .from('providers')
-        .insert({
-          id: user.id,
-          display_name: profileData.full_name,
-        })
-        .select()
-        .single();
-
-      if (providerError) {
-        // Rollback profile creation
-        await supabase.from('profiles').delete().eq('id', user.id);
-        throw providerError;
-      }
-
-      provider = providerData;
-    }
-
-    // Send welcome email (example of server-side workflow)
-    // await sendWelcomeEmail(user.email, profileData.full_name);
-
-    // Log user creation for analytics
-    console.log(`New user profile created: ${user.id} - ${profileData.full_name}`);
-
-    res.status(201).json({
-      message: 'Profile created successfully',
-      profile: newUser,
-      provider,
-    });
-
+    res.status(200).json({ message: 'Profile created/updated successfully', data });
   } catch (error) {
-    console.error('Error creating profile:', error);
-    res.status(500).json({ 
-      error: error instanceof Error ? error.message : 'Failed to create profile' 
-    });
-  }
-});
-
-// Get profile endpoint
-router.get('/', async (req, res) => {
-  try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Missing authorization header' });
-    }
-
-    const token = authHeader.substring(7);
-    
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !user) {
-      return res.status(401).json({ error: 'Invalid token' });
-    }
-
-    // Get profile with provider status
-    const { data: userProfile, error: profileError } = await supabase
-      .from('profiles')
-      .select(`
-        *,
-        providers(id, display_name)
-      `)
-      .eq('id', user.id)
-      .single();
-
-    if (profileError) {
-      if (profileError.code === 'PGRST116') {
-        return res.status(404).json({ error: 'Profile not found' });
-      }
-      throw profileError;
-    }
-
-    res.json({
-      profile: userProfile,
-      is_provider: !!userProfile.providers,
-    });
-
-  } catch (error) {
-    console.error('Error fetching profile:', error);
-    res.status(500).json({ error: 'Failed to fetch profile' });
+    console.error('Unexpected error:', error);
+    res.status(500).json({ error: 'An unexpected error occurred.' });
   }
 });
 

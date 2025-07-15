@@ -78,13 +78,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       setIsProvider(!!providerData);
 
-      // Redirect incomplete profiles to complete-profile page
+      // Redirect incomplete profiles to signup page for profile completion
       // But avoid redirect loops and allow access to auth pages
-      const authPages = ['/auth/login', '/auth/signup', '/auth/complete-profile'];
+      const authPages = ['/auth/login', '/auth/signup'];
       const isOnAuthPage = authPages.some(page => pathname.startsWith(page));
 
       if (!profileData && !isOnAuthPage) {
-        router.push('/auth/complete-profile');
+        router.push('/auth/signup');
       }
     } catch (error) {
       console.error('Error checking profile:', error);

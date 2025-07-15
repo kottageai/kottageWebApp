@@ -20,46 +20,89 @@ class ApiClient {
 
   private async handleResponse(response: Response) {
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-      throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      let message = `HTTP ${response.status}: ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        const err = errorData.error ?? errorData.message ?? errorData;
+        if (typeof err === 'string') {
+          message = err;
+        } else if (Array.isArray(err)) {
+          // Zod issues array
+          message = err.map((iss: any) => iss.message || JSON.stringify(iss)).join(', ');
+        } else if (err && typeof err === 'object') {
+          message = JSON.stringify(err);
+        }
+      } catch (_) {
+        // response not JSON or parse failed, keep default message
+      }
+      throw new Error(message);
     }
     return response.json();
   }
 
+  private async getAuthData() {
+    // Try to get the current session first
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (session && session.user) {
+      return { token: session.access_token, user: session.user };
+    }
+
+    // Fallback: if there's no active session (e.g., email confirmation required),
+    // check if we still have a user object
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) {
+      throw new Error('User session not found.');
+    }
+    return { token: null, user };
+  }
+
   async post(endpoint: string, data: any) {
-    const headers = await this.getAuthHeaders();
+    const { token, user } = await this.getAuthData();
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
-      headers,
-      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ ...data, user }),
     });
     return this.handleResponse(response);
   }
 
   async get(endpoint: string) {
-    const headers = await this.getAuthHeaders();
+    const { token } = await this.getAuthData();
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'GET',
-      headers,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      },
     });
     return this.handleResponse(response);
   }
 
   async put(endpoint: string, data: any) {
-    const headers = await this.getAuthHeaders();
+    const { token, user } = await this.getAuthData();
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'PUT',
-      headers,
-      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ ...data, user }),
     });
     return this.handleResponse(response);
   }
 
   async delete(endpoint: string) {
-    const headers = await this.getAuthHeaders();
+    const { token } = await this.getAuthData();
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'DELETE',
-      headers,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      },
     });
     return this.handleResponse(response);
   }
@@ -69,18 +112,19 @@ export const apiClient = new ApiClient();
 
 // Specific API methods
 export const profileApi = {
-  create: (data: {
+  create: (profileData: {
     full_name: string;
     phone: string;
-    address?: string;
-    wants_to_be_provider: boolean;
-  }) => apiClient.post('/api/profiles', data),
+    home_address?: string;
+    is_provider: boolean;
+  }) => apiClient.post('/api/profiles', { profileData }),
 
   get: () => apiClient.get('/api/profiles'),
 
-  update: (data: Partial<{
+  update: (profileData: Partial<{
     full_name: string;
     phone: string;
-    address: string;
-  }>) => apiClient.put('/api/profiles', data),
+    home_address: string;
+    is_provider: boolean;
+  }>) => apiClient.put('/api/profiles', { profileData }),
 }; 
