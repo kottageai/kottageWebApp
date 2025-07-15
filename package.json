@@ -4,5 +4,8 @@
   "workspaces": [
     "frontend",
     "backend"
-  ]
-} 
+  ],
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.11"
+  }
+}

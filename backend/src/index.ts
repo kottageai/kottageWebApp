@@ -4,15 +4,14 @@ import dotenv from 'dotenv';
 import bookingsRouter from './routes/bookings';
 import profilesRouter from './routes/profiles';
 import generateFormRouter from './routes/generateForm';
-import path from 'path';
+import { createSupabaseAdminClient, createSupabaseClient } from './lib/supabaseClient';
 
-dotenv.config({ path: path.resolve(process.cwd(), 'backend/.env') });
-
-console.log('SUPABASE_URL:', process.env.SUPABASE_URL);
-console.log('SUPABASE_SERVICE_ROLE_KEY:', process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Loaded' : 'Not Loaded');
+dotenv.config({ path: `${__dirname}/../.env` });
 
 const app = express();
 const port = process.env.PORT || 4000;
+export const supabaseAdmin = createSupabaseAdminClient();
+export const supabase = createSupabaseClient();
 
 app.use(cors());
 app.use(express.json());
