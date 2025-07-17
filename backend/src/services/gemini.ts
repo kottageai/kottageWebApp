@@ -1,8 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { aIFieldGeneratorPrompt } from "../prompts/form-generator";
 
-// IMPORTANT: Set your Gemini API key in the environment as GEMINI_API_KEY
-
 export async function generateBookingFormFields(description: string) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -10,15 +8,17 @@ export async function generateBookingFormFields(description: string) {
   }
 
   const genAI = new GoogleGenAI({ apiKey });
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.models.generateContent;
 
   const prompt = aIFieldGeneratorPrompt.replace("{{USER_SERVICE_DESCRIPTION}}", description);
 
   try {
-    const result = await model.generateContent(prompt);
-    const response = result.response;
-    const content = response.text();
-    
+    const result = await model({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+    });
+
+    const content = result.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!content) {
       throw new Error('No content received from Gemini API');
     }
