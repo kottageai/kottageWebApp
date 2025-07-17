@@ -44,3 +44,4 @@ frontend/.yarn/*
 
 ### Backend ###
 backend/.env
+backend/node_modules/
