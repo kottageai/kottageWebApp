@@ -11,6 +11,32 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const checkUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
+      
+      console.log("data", data);
+
+      if (error) {
+        console.error('Error checking profile:', error);
+        return false;
+      }
+
+      if (!data) {
+        return false;
+      }
+
+      return !!data;
+    } catch (err) {
+      console.error('Unexpected error checking profile:', err);
+      return false;
+    }
+  };
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -24,8 +50,14 @@ export default function LoginPage() {
 
       if (error) {
         setError(error.message);
-      } else {
-        router.push('/provider/dashboard');
+      } else if (data.user) {
+        console.log("data.user", data.user);
+        const hasProfile = await checkUserProfile(data.user.id);
+        if (hasProfile) {
+          router.push('/provider/dashboard');
+        } else {
+          router.push('/auth/additional-info');
+        }
       }
     } catch (err) {
       setError('An unexpected error occurred');
@@ -39,7 +71,7 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/provider/dashboard`
+          redirectTo: `${window.location.origin}/auth/callback`
         }
       });
 

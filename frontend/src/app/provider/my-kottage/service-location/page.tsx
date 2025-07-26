@@ -9,7 +9,7 @@ import { ToggleSwitch } from '@/components/ui/ToggleSwitch';
 const Card = ({ title, children, enabled, onToggle }: { title: string, children: React.ReactNode, enabled: boolean, onToggle: (enabled: boolean) => void }) => {
   return (
     <div style={{
-      backgroundColor: '#f9fafb',
+      backgroundColor: '#F4F2F0',
       borderRadius: '16px',
       padding: '24px',
       border: '1px solid #e5e7eb',

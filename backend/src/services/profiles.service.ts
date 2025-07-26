@@ -1,9 +1,9 @@
-import { supabase } from "../util/supabase";
+import { supabaseAdmin } from "../util/supabase";
 import { Profile, CreateProfileData, ProfileSchema } from "../types/profiles";
 
 export class ProfilesService {
   async getProfile(id: string): Promise<Profile | null> {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('profiles')
       .select('*')
       .eq('id', id)
@@ -17,7 +17,7 @@ export class ProfilesService {
   }
 
   async getAllProfiles(): Promise<Profile[]> {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('profiles')
       .select('*');
 
@@ -28,7 +28,7 @@ export class ProfilesService {
   }
 
   async createProfile(id: string, profileData: CreateProfileData): Promise<Profile> {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('profiles')
       .insert({ id, ...profileData })
       .select()
@@ -42,7 +42,7 @@ export class ProfilesService {
   }
 
   async deleteProfile(id: string): Promise<void> {
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('profiles')
       .delete()
       .eq('id', id);

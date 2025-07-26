@@ -9,9 +9,33 @@ export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const checkUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error && error.code === 'PGRST116') {
+        // No profile found, redirect to additional info
+        return false;
+      }
+      
+      if (error) {
+        console.error('Error checking profile:', error);
+        return false;
+      }
+
+      return !!data;
+    } catch (err) {
+      console.error('Unexpected error checking profile:', err);
+      return false;
+    }
+  };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,11 +58,6 @@ export default function SignupPage() {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          data: {
-            full_name: fullName,
-          }
-        }
       });
 
       if (error) {
@@ -47,8 +66,14 @@ export default function SignupPage() {
         // Check if email confirmation is required
         if (data.user && !data.user.email_confirmed_at) {
           setError('Please check your email for confirmation link');
-        } else {
-          router.push('/provider/dashboard');
+        } else if (data.user) {
+          // Check if user has profile
+          const hasProfile = await checkUserProfile(data.user.id);
+          if (hasProfile) {
+            router.push('/provider/dashboard');
+          } else {
+            router.push('/auth/additional-info');
+          }
         }
       }
     } catch (err) {
@@ -63,7 +88,7 @@ export default function SignupPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/provider/dashboard`
+          redirectTo: `${window.location.origin}/auth/callback`
         }
       });
 
@@ -124,35 +149,6 @@ export default function SignupPage() {
         )}
 
         <form onSubmit={handleSignUp} style={{ marginBottom: '1.5rem' }}>
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '0.875rem', 
-              fontWeight: 500, 
-              color: '#374151',
-              marginBottom: '0.5rem'
-            }}>
-              Full Name
-            </label>
-            <input
-              type="text"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '1rem',
-                outline: 'none',
-                transition: 'border-color 0.2s'
-              }}
-              onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
-            />
-          </div>
-
           <div style={{ marginBottom: '1rem' }}>
             <label style={{ 
               display: 'block', 

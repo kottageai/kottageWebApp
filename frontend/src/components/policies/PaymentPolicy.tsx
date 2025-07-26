@@ -76,7 +76,7 @@ export const PaymentPolicy: React.FC<PaymentPolicyProps> = ({ onDataChange }) =>
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <div style={{ background: '#f9fafb', padding: '24px', borderRadius: 12, border: '1px solid #e5e7eb' }}>
+      <div style={{ background: '#F4F2F0', padding: '24px', borderRadius: 12, border: '1px solid #EAE8E6' }}>
         <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: 16 }}>Booking payment requirements</h3>
         <RadioSelect
           options={[
@@ -101,8 +101,9 @@ export const PaymentPolicy: React.FC<PaymentPolicyProps> = ({ onDataChange }) =>
                             width: '60px',
                             padding: '6px 8px',
                             borderRadius: 4,
-                            border: '1px solid #d1d5db',
-                            fontSize: '0.875rem'
+                            border: '1px solid #EAE8E6',
+                            fontSize: '0.875rem',
+                            backgroundColor: 'white'
                           }}
                         />
                         <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>% of total service cost</span>
@@ -118,8 +119,9 @@ export const PaymentPolicy: React.FC<PaymentPolicyProps> = ({ onDataChange }) =>
                             width: '80px',
                             padding: '6px 8px',
                             borderRadius: 4,
-                            border: '1px solid #d1d5db',
-                            fontSize: '0.875rem'
+                            border: '1px solid #EAE8E6',
+                            fontSize: '0.875rem',
+                            backgroundColor: 'white'
                           }}
                         />
                       </div>
@@ -133,7 +135,7 @@ export const PaymentPolicy: React.FC<PaymentPolicyProps> = ({ onDataChange }) =>
                       width: '100%',
                       padding: '8px 12px',
                       borderRadius: 6,
-                      border: '1px solid #d1d5db',
+                      border: '1px solid #EAE8E6',
                       fontSize: '0.875rem',
                       backgroundColor: 'white'
                     }}>
@@ -154,7 +156,7 @@ export const PaymentPolicy: React.FC<PaymentPolicyProps> = ({ onDataChange }) =>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'row', gap: 24 }}>
-        <div style={{ flex: '1 1 0', minWidth: 0, background: '#f9fafb', padding: '24px', borderRadius: 12, border: '1px solid #e5e7eb' }}>
+        <div style={{ flex: '1 1 0', minWidth: 0, background: '#F4F2F0', padding: '24px', borderRadius: 12, border: '1px solid #EAE8E6' }}>
           <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: 16 }}>Online booking payment methods</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {onlinePaymentMethods.map((method) => (
@@ -164,10 +166,10 @@ export const PaymentPolicy: React.FC<PaymentPolicyProps> = ({ onDataChange }) =>
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  backgroundColor: method.enabled ? 'white' : '#f8f9fa',
+                  backgroundColor: 'white',
                   padding: '16px',
                   borderRadius: 8,
-                  border: `1px solid ${method.enabled ? '#e5e7eb' : '#e9ecef'}`,
+                  border: `1px solid ${method.enabled ? '#EAE8E6' : '#DCDAD7'}`,
                   opacity: method.enabled ? 1 : 0.6,
                   transition: 'all 0.2s ease-in-out'
                 }}
@@ -188,7 +190,7 @@ export const PaymentPolicy: React.FC<PaymentPolicyProps> = ({ onDataChange }) =>
           </div>
         </div>
 
-        <div style={{ flex: '1 1 0', minWidth: 0, background: '#f9fafb', padding: '24px', borderRadius: 12, border: '1px solid #e5e7eb' }}>
+        <div style={{ flex: '1 1 0', minWidth: 0, background: '#F4F2F0', padding: '24px', borderRadius: 12, border: '1px solid #EAE8E6' }}>
           <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: 16 }}>On-site payment methods</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {onsitePaymentMethods.map((method) => (
@@ -198,10 +200,10 @@ export const PaymentPolicy: React.FC<PaymentPolicyProps> = ({ onDataChange }) =>
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  backgroundColor: method.enabled ? 'white' : '#f8f9fa',
+                  backgroundColor: 'white',
                   padding: '16px',
                   borderRadius: 8,
-                  border: `1px solid ${method.enabled ? '#e5e7eb' : '#e9ecef'}`,
+                  border: `1px solid ${method.enabled ? '#EAE8E6' : '#DCDAD7'}`,
                   opacity: method.enabled ? 1 : 0.6,
                   transition: 'all 0.2s ease-in-out'
                 }}

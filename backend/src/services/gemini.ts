@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { aIFieldGeneratorPrompt } from "../prompts/form-generator";
+import { aIFieldGeneratorPrompt } from "../prompts/prompt";
 
 export async function generateBookingFormFields(description: string) {
   const apiKey = process.env.GEMINI_API_KEY;

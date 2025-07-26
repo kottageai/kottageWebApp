@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
+import { supabase } from '@/lib/supabase/client';
 
 type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 
@@ -131,6 +132,25 @@ export default function SchedulingPage() {
   const [bufferAfter, setBufferAfter] = useState('');
   const [travelTime, setTravelTime] = useState('');
 
+  const handleGoogleSync = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          scopes: 'https://www.googleapis.com/auth/calendar',
+          redirectTo: window.location.href,
+        },
+      });
+
+      if (error) {
+        console.error('Error syncing Google Calendar:', error);
+        // Handle error for the user, e.g., show a notification
+      }
+    } catch (error) {
+      console.error('Unexpected error during Google Calendar sync:', error);
+    }
+  };
+
   const toggleDay = (day: DayOfWeek) => {
     setSchedule(prev => ({
       ...prev,
@@ -213,7 +233,7 @@ export default function SchedulingPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
               {enabledDays.map(day => (
                 <div key={day.key} style={{ 
-                  backgroundColor: '#f9fafb', 
+                  backgroundColor: '#F4F2F0', 
                   padding: '16px', 
                   borderRadius: 8,
                   border: '1px solid #e5e7eb'
@@ -285,7 +305,7 @@ export default function SchedulingPage() {
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
               {/* Advance Notice */}
-              <div style={{ backgroundColor: '#f9fafb', padding: '20px', borderRadius: 12, border: '1px solid #e5e7eb' }}>
+              <div style={{ backgroundColor: '#F4F2F0', padding: '20px', borderRadius: 12, border: '1px solid #e5e7eb' }}>
                 <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: 8 }}>Advance Notice</h3>
                 <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: 16 }}>
                   Set the minimum notice period you need between a customer's booking and the session.
@@ -310,7 +330,7 @@ export default function SchedulingPage() {
               </div>
 
               {/* Availability Window */}
-              <div style={{ backgroundColor: '#f9fafb', padding: '20px', borderRadius: 12, border: '1px solid #e5e7eb' }}>
+              <div style={{ backgroundColor: '#F4F2F0', padding: '20px', borderRadius: 12, border: '1px solid #e5e7eb' }}>
                 <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: 8 }}>Availability Window</h3>
                 <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: 16 }}>
                   Adjust how far in advance you want to let customers book a session with you.
@@ -342,7 +362,7 @@ export default function SchedulingPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, marginTop: 24 }}>
               {/* Buffer Time */}
-              <div style={{ backgroundColor: '#f9fafb', padding: '20px', borderRadius: 12, border: '1px solid #e5e7eb' }}>
+              <div style={{ backgroundColor: '#F4F2F0', padding: '20px', borderRadius: 12, border: '1px solid #e5e7eb' }}>
                 <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: 8 }}>Buffer Time</h3>
                 <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: 16 }}>
                   Set how much time you need to block off before and after a session for breaks or preparation.
@@ -372,7 +392,7 @@ export default function SchedulingPage() {
               </div>
 
               {/* Travel Time */}
-              <div style={{ backgroundColor: '#f9fafb', padding: '20px', borderRadius: 12, border: '1px solid #e5e7eb' }}>
+              <div style={{ backgroundColor: '#F4F2F0', padding: '20px', borderRadius: 12, border: '1px solid #e5e7eb' }}>
                 <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: 8 }}>Travel Time</h3>
                 <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: 16 }}>
                   Set how much time you need to block off before a session for sessions where you travel to the customer.
@@ -404,11 +424,13 @@ export default function SchedulingPage() {
                 alignItems: 'center', 
                 gap: 12, 
                 padding: '12px 16px', 
-                backgroundColor: '#f9fafb', 
+                backgroundColor: '#F4F2F0', 
                 borderRadius: 8, 
                 border: '1px solid #e5e7eb',
                 cursor: 'pointer'
-              }}>
+              }}
+              onClick={handleGoogleSync}
+              >
                 <div style={{ 
                   width: 24, 
                   height: 24, 
@@ -431,7 +453,7 @@ export default function SchedulingPage() {
                 alignItems: 'center', 
                 gap: 12, 
                 padding: '12px 16px', 
-                backgroundColor: '#f9fafb', 
+                backgroundColor: '#F4F2F0', 
                 borderRadius: 8, 
                 border: '1px solid #e5e7eb',
                 cursor: 'pointer'

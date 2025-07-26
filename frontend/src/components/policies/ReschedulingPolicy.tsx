@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { SECTION_FIELDS, FieldDef } from '@/lib/section-defs';
 
-interface LatePolicyProps {
+interface ReschedulingPolicyProps {
   onDataChange: (data: any) => void;
 }
 
@@ -24,7 +24,7 @@ function renderField(field: FieldDef, value: any, onChange: (v: any) => void) {
   );
 }
 
-export const LatePolicy: React.FC<LatePolicyProps> = ({ onDataChange }) => {
+export const ReschedulingPolicy: React.FC<ReschedulingPolicyProps> = ({ onDataChange }) => {
   const [formData, setFormData] = useState<Record<string, any>>({});
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export const LatePolicy: React.FC<LatePolicyProps> = ({ onDataChange }) => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
-  const fields = SECTION_FIELDS['late-policy'] || [];
+  const fields = SECTION_FIELDS['rescheduling-policy'] || [];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>

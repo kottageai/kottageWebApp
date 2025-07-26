@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { supabase } from '../util/supabase';
+import { supabaseAdmin } from '../util/supabase';
 
 declare global {
   namespace Express {
@@ -14,13 +14,19 @@ declare global {
 
 export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
   try {
-    const token = req.headers.authorization?.replace('Bearer ', '');
-
-    if (!token) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
       return res.status(401).json({ error: 'No token provided' });
     }
 
-    const { data: { user }, error } = await supabase.auth.getUser(token);
+    // Expected format: "Bearer <token>"
+    const [, token] = authHeader.split(' ');
+
+    if (!token) {
+      return res.status(401).json({ error: 'Malformed authorization header' });
+    }
+
+    const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
 
     if (error || !user) {
       return res.status(401).json({ error: 'Invalid token' });

@@ -40,8 +40,8 @@ export const RadioSelect: React.FC<RadioSelectProps> = ({
                 alignItems: 'center',
                 padding: '16px',
                 borderRadius: isExpanded ? '12px 12px 0 0' : 12,
-                border: `1.5px solid ${isSelected ? '#3b82f6' : '#e5e7eb'}`,
-                backgroundColor: isSelected ? '#eff6ff' : 'white',
+                border: `1.5px solid ${isSelected ? '#5B85CC' : '#EAE8E6'}`,
+                backgroundColor: 'white',
                 cursor: 'pointer',
                 boxShadow: isSelected ? '0 1px 2px 0 rgb(0 0 0 / 0.05)' : 'none',
                 transition: 'all 0.2s ease-in-out',
@@ -53,7 +53,7 @@ export const RadioSelect: React.FC<RadioSelectProps> = ({
                   width: 20,
                   height: 20,
                   borderRadius: '50%',
-                  border: `1.5px solid ${isSelected ? '#3b82f6' : '#d1d5db'}`,
+                  border: `1.5px solid ${isSelected ? '#5B85CC' : '#d1d5db'}`,
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -65,7 +65,7 @@ export const RadioSelect: React.FC<RadioSelectProps> = ({
                       width: 10,
                       height: 10,
                       borderRadius: '50%',
-                      backgroundColor: '#3b82f6',
+                      backgroundColor: '#5B85CC',
                     }}
                   />
                 )}
@@ -75,11 +75,11 @@ export const RadioSelect: React.FC<RadioSelectProps> = ({
             {isExpanded && (
               <div
                 style={{
-                  borderLeft: '1.5px solid #3b82f6',
-                  borderRight: '1.5px solid #3b82f6',
-                  borderBottom: '1.5px solid #3b82f6',
+                  borderLeft: '1.5px solid #5B85CC',
+                  borderRight: '1.5px solid #5B85CC',
+                  borderBottom: '1.5px solid #5B85CC',
                   borderRadius: '0 0 12px 12px',
-                  backgroundColor: '#f8fafc',
+                  backgroundColor: 'white',
                 }}
               >
                 <div style={{ padding: '16px' }}>

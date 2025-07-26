@@ -21,6 +21,7 @@ export const ToggleSwitch = ({ enabled, onChange, size = 'medium' }: ToggleSwitc
 
     return (
         <button
+            type="button"
             onClick={(e) => {
                 e.stopPropagation();
                 toggle();
@@ -29,7 +30,7 @@ export const ToggleSwitch = ({ enabled, onChange, size = 'medium' }: ToggleSwitc
                 width: `${trackW}px`,
                 height: `${trackH}px`,
                 borderRadius: `${trackH / 2}px`,
-                backgroundColor: '#eef2ff', 
+                backgroundColor: '#f3f4f6', 
                 position: 'relative',
                 cursor: 'pointer',
                 border: 'none',
@@ -44,7 +45,7 @@ export const ToggleSwitch = ({ enabled, onChange, size = 'medium' }: ToggleSwitc
                     width: `${thumb}px`,
                     height: `${thumb}px`,
                     borderRadius: `${thumbRadius}px`, 
-                    backgroundColor: enabled ? '#6366f1' : '#a8a29e',
+                    backgroundColor: enabled ? '#5B85CC' : '#a8a29e',
                     position: 'absolute',
                     top: '50%',
                     transform: `translateY(-50%) translateX(${enabled ? trackW - thumb - padding : padding}px)`,

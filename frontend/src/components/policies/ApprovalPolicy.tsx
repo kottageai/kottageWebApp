@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { RadioSelect } from './RadioSelect';
 
-interface BookingPolicyProps {
+interface ApprovalPolicyProps {
   onDataChange: (data: any) => void;
 }
 
-export const BookingPolicy: React.FC<BookingPolicyProps> = ({ onDataChange }) => {
+export const ApprovalPolicy: React.FC<ApprovalPolicyProps> = ({ onDataChange }) => {
   const [bookingApprovalMode, setBookingApprovalMode] = useState('instant');
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export const BookingPolicy: React.FC<BookingPolicyProps> = ({ onDataChange }) =>
   };
 
   return (
-    <div style={{ background: '#f9fafb', padding: '24px', borderRadius: 12, border: '1px solid #e5e7eb' }}>
+    <div style={{ background: '#F4F2F0', padding: '24px', borderRadius: 12, border: '1px solid #EAE8E6' }}>
       <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: 16 }}>Booking approval mode</h3>
       <RadioSelect
         options={[

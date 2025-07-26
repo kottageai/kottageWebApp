@@ -8,11 +8,11 @@ export const ProfileSchema = z.object({
   home_address: z.string().nullable(),
   avatar_url: z.url().nullable(),
   is_provider: z.boolean().default(false),
-  created_at: z.iso.datetime()
+  created_at: z.string(),
 })
 
 export const CreateProfileSchema = z.object({
-  full_name: z.uuid().min(2, 'Full name must be at least 2 characters').max(100),
+  full_name: z.string().min(2, 'Full name must be at least 2 characters').max(100),
   phone: z.string().regex(/^\+?[\d\s-()]+$/, 'Invalid phone format'),
   email: z.email('Invalid email format'),
   home_address: z.string().max(500).optional(),

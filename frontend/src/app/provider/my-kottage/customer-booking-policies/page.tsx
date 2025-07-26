@@ -2,24 +2,26 @@
 import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
-import { BookingPolicy } from '@/components/policies/BookingPolicy';
+import { ApprovalPolicy } from '@/components/policies/ApprovalPolicy';
 import { PaymentPolicy } from '@/components/policies/PaymentPolicy';
 import { CancellationPolicy } from '@/components/policies/CancellationPolicy';
 import { LatePolicy } from '@/components/policies/LatePolicy';
 import { PolicyButton } from '@/components/policies/PolicyButton';
+import { ReschedulingPolicy } from '@/components/policies/ReschedulingPolicy';
 
-type PolicyType = 'booking-policy' | 'payment-policy' | 'cancellation-policy' | 'late-policy';
+type PolicyType = 'approval-policy' | 'payment-policy' | 'cancellation-policy' | 'late-policy' | 'booking-policy';
 
 const POLICIES = [
-  { key: 'booking-policy' as PolicyType, label: 'Booking Policies', Component: BookingPolicy },
-  { key: 'payment-policy' as PolicyType, label: 'Payment Policies', Component: PaymentPolicy },
-  { key: 'cancellation-policy' as PolicyType, label: 'Cancellation Policies', Component: CancellationPolicy },
-  { key: 'late-policy' as PolicyType, label: 'Late Policies', Component: LatePolicy },
+  { key: 'approval-policy' as PolicyType, label: 'Approval', Component: ApprovalPolicy },
+  { key: 'payment-policy' as PolicyType, label: 'Payment', Component: PaymentPolicy },
+  { key: 'cancellation-policy' as PolicyType, label: 'Cancellation', Component: CancellationPolicy },
+  { key: 'lateness-policy' as PolicyType, label: 'Lateness', Component: LatePolicy },
+  { key: 'rescheduling-policy' as PolicyType, label: 'Rescheduling', Component: ReschedulingPolicy },
 ];
 
 export default function CustomerBookingPoliciesPage() {
   const router = useRouter();
-  const [activePolicy, setActivePolicy] = useState<PolicyType>('booking-policy');
+  const [activePolicy, setActivePolicy] = useState<PolicyType>('approval-policy');
   const [allPolicyData, setAllPolicyData] = useState<Record<string, any>>({});
 
   const handleDataChange = useCallback((data: any) => {
