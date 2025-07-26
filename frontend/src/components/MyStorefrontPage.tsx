@@ -20,11 +20,7 @@ function MyKottagePageContent() {
   });
 
   const handleSectionClick = (section: string) => {
-    router.push(`/provider/my-kottage/${section}`);
-  };
-
-  const handleSaveAndContinue = () => {
-    // ... existing code ...
+    router.push(`/provider/my-storefront/${section}`);
   };
 
   const isSectionComplete = (sectionKey: string): boolean => {
