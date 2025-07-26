@@ -60,8 +60,6 @@ export default function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
     const { user, signOut } = useAuth();
-    const myKottagePath = '/provider/my-kottage';
-    const isMyKottageActive = pathname.startsWith(myKottagePath);
 
     const handleSignOut = async () => {
         await signOut();
@@ -80,13 +78,13 @@ export default function Sidebar() {
         }}>
             <div>
                 <div style={{ padding: '0 16px', marginBottom: '24px' }}>
-                    <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold', margin: 0 }}>kottage</h1>
+                    <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold', margin: 0 }}>meso</h1>
                 </div>
                 <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <NavItem href="/provider/dashboard" iconSrc="/window.svg" label="Dashboard" active={pathname === '/provider/dashboard'} />
                     <NavItem href="/provider/bookings" iconSrc="/file.svg" label="Bookings" active={pathname === '/provider/bookings'} />
                     <NavItem href="/provider/calendar" iconSrc="/globe.svg" label="Calendar" active={pathname === '/provider/calendar'} />
-                    <NavItem href={myKottagePath} iconSrc="/window.svg" label="My Kottage" active={isMyKottageActive} />
+                    <NavItem href="/provider/my-storefront" iconSrc="/window.svg" label="My Storefront" active={pathname.startsWith('/provider/my-storefront')} />
                     <NavItem href="/provider/payments" iconSrc="/file.svg" label="Payments" active={pathname === '/provider/payments'} />
                 </nav>
             </div>
